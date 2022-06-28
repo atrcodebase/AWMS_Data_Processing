@@ -65,7 +65,8 @@ new_hh_roster_extra_columns <- c(
   "Read_Write_Wording_Pashto",
   "Basic_Calculations_Wording_English",
   "Basic_Calculations_Wording_Dari",
-  "Basic_Calculations_Wording_Pashto"
+  "Basic_Calculations_Wording_Pashto",
+  "new_uuid"
 )
 labor_extra_columns <- c(
   "Family_Member_Labor_Dari",
@@ -83,7 +84,8 @@ labor_extra_columns <- c(
   "Labor_Wording4_Dari",
   "Labor_Wording1_Pashto",
   "Labor_Wording2_Pashto",
-  "Labor_Wording3_Pashto"
+  "Labor_Wording3_Pashto",
+  "new_uuid"
 )
 education_extra_columns <- c(
   "Family_Member_Education_Dari",
@@ -94,7 +96,8 @@ education_extra_columns <- c(
   "Education_Wording3_Dari",
   "Education_Wording4_Dari",
   "Education_Wording2_Pashto",
-  "Education_Wording3_Pashot"
+  "Education_Wording3_Pashot",
+  "new_uuid"
 )
 
 health_extra_columns <- c(
@@ -106,15 +109,23 @@ health_extra_columns <- c(
   "Health_Wording4_Dari",
   "Health_Wording5_Dari",
   "Health_Wording5_Pashto",
-  "Health_Wording4_Pashto"
+  "Health_Wording4_Pashto",
+  "new_uuid"
 )
 
 ### remove extra columns from Raw Data -----------------------------------------------
 data_raw <- data_raw %>% select(-all_of(data_extra_columns))
+Roster_Verification_raw <- Roster_Verification_raw %>% select(-new_uuid)
 New_HH_Roster_raw <- New_HH_Roster_raw %>% select(-all_of(new_hh_roster_extra_columns))
 Labor_raw <- Labor_raw %>% select(-all_of(labor_extra_columns))
 Education_raw <- Education_raw %>% select(-all_of(education_extra_columns))
 Health_raw <- Health_raw %>% select(-all_of(health_extra_columns))
+Agriculture_raw <- Agriculture_raw %>% select(-new_uuid)
+Basic_needs_raw <- Basic_needs_raw %>% select(-new_uuid)
+HH_Welfare_raw <- HH_Welfare_raw %>% select(-new_uuid)
+Covid19_raw <- Covid19_raw %>% select(-new_uuid)
+Market_raw <- Market_raw %>% select(-new_uuid)
+Closing_Group_raw <- Closing_Group_raw %>% select(-new_uuid)
 
 ### remove extra columns from Cleaned Data & Rename --------------------------------------
 data <- data %>% 
@@ -122,6 +133,7 @@ data <- data %>%
 
 # Roster_Verification
 Roster_Verification <- Roster_Verification %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_RV,
     Region_Final = Region_Final_RV,
@@ -176,6 +188,7 @@ Health <- Health %>%
 
 # Agriculture
 Agriculture <- Agriculture %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_A,
     Region_Final = Region_Final_A,
@@ -186,6 +199,7 @@ Agriculture <- Agriculture %>%
 
 # Basic_needs
 Basic_needs <- Basic_needs %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_B,
     Region_Final = Region_Final_B,
@@ -196,6 +210,7 @@ Basic_needs <- Basic_needs %>%
 
 # HH_Welfare
 HH_Welfare <- HH_Welfare %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_W,
     Region_Final = Region_Final_W,
@@ -206,6 +221,7 @@ HH_Welfare <- HH_Welfare %>%
 
 # Covid19
 Covid19 <- Covid19 %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_C,
     Region_Final = Region_Final_C,
@@ -216,6 +232,7 @@ Covid19 <- Covid19 %>%
 
 # Market
 Market <- Market %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_M,
     Region_Final = Region_Final_M,
@@ -226,6 +243,7 @@ Market <- Market %>%
 
 # Closing_Group
 Closing_Group <- Closing_Group %>%
+  select(-new_uuid) %>% 
   rename(
     caseid = caseid_CL,
     Region_Final = Region_Final_CL,

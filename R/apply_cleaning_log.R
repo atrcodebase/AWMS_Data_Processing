@@ -6,20 +6,20 @@ awms_sheets <- c("data", "Roster_Verification", "New_HH_Roster", "Labor", "Educa
 correction_log$not_found <- NA
 #check non-existent logs
 for(i in 1:nrow(correction_log)){
-  sheet_name <- correction_log$sheet_name[i]
+  tab_name <- correction_log$tab_name[i]
   key <- correction_log$KEY[i]
   question <- correction_log$question[i]
   
   #null sheet
-  if(is.na(sheet_name) | sheet_name %notin% awms_sheets){
-    correction_log$not_found[i] <- "sheet_name"
+  if(is.na(tab_name) | tab_name %notin% awms_sheets){
+    correction_log$not_found[i] <- "tab_name"
   } else {
     #question not in sheet
-    if(question %notin% names(get(sheet_name))){
+    if(question %notin% names(get(tab_name))){
       correction_log$not_found[i] <- "question"
     }
     #key not in sheet
-    if(key %notin% get(sheet_name)$KEY){
+    if(key %notin% get(tab_name)$KEY){
       correction_log$not_found[i] <- "KEY"
     }
   }
@@ -131,7 +131,7 @@ for(i in 1:nrow(L13_coding_log)){
 
 
 # remove extra objects -------------------------------------------
-rm(awms_sheets, sheet_name, key, question)
+rm(awms_sheets, tab_name, key, question)
 # rm(data_raw, Roster_Verification_raw, New_HH_Roster_raw, Labor_raw, Health_raw, 
 #    Education_raw, Agriculture_raw, Basic_needs_raw, HH_Welfare_raw, Market_raw, 
 #    Closing_Group_raw, Covid19_raw)
