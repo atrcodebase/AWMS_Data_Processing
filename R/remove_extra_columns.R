@@ -101,7 +101,6 @@ education_extra_columns <- c(
 )
 
 health_extra_columns <- c(
-  "Family_Member_Health_English",
   "Family_Member_Health_Dari",
   "Family_Member_Health_Pashto",
   "Health_Wording4_English",

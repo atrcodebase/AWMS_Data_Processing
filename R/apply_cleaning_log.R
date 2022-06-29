@@ -76,6 +76,7 @@ Closing_Group <- atRfunctions::apply_log(data = Closing_Group,
 for(i in 1:nrow(L13_coding_log)){
   uuid_i <- L13_coding_log$KEY[i]
 
+  Labor[Labor[["KEY"]] %in% uuid_i, "L13_Translation"] <- L13_coding_log$L13_Translation[i]
   Labor[Labor[["KEY"]] %in% uuid_i, "L13_Job_Code"] <- L13_coding_log$L13_Job_Coding[i]
   Labor[Labor[["KEY"]] %in% uuid_i, "L13_Label"] <- L13_coding_log$L13_Label[i]
   Labor[Labor[["KEY"]] %in% uuid_i, "ISIC_Code"] <- L13_coding_log$ISIC_Code[i]

@@ -1,10 +1,32 @@
-# Create A subset of main sheet to be merged with child sheets ---------------------------
+# Update Total Family members in Main sheet ----------------------------------------------
+n_family <- rbind(Roster_Verification %>% 
+        select(PARENT_KEY),
+      New_HH_Roster %>% 
+        select(PARENT_KEY)) %>% 
+  count(KEY=PARENT_KEY, name="n_family_sample_new")
+data <- data %>% 
+  left_join(n_family, by = "KEY") %>% 
+  relocate(n_family_sample_new, .after = n_family_sample)
+
+#Update District Name based on geo
+for(i in 1:nrow(data)){
+  prov = data$Province_Final[i]
+  dist = data$Distric_Final[i]
+  
+  if(prov %in% geo_data$Province & dist %in% geo_data$Previous_Name){
+    new_dist <- geo_data$Revised_Name[geo_data$Province %in% prov & 
+                                        geo_data$Previous_Name %in% dist]
+    
+    data$Distric_Final[i] <- new_dist
+  }
+}
+
+# Create A subset of main sheet to be merged with child sheets
 key <- "new_uuid"
 cols <- "caseid|Region_Final|Province_Final|Distric_Final|Respondent_Type_f|userid"
-
-# Data
 data_sub <- data %>% 
   select(grep(cols,names(data)), KEY)
+
 
 # Roster_Verification --------------------------------------------------------------------
 Roster_Verification <- Roster_Verification %>%
@@ -27,7 +49,8 @@ Labor <- Labor %>%
   left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
   relocate(caseid:Distric_Final, .before = 1)
 Labor <- Labor %>%
-  filter(Family_Member_Age_Labor >= 14)
+  filter(Family_Member_Age_Labor >= 14) %>% 
+  mutate(L13_Translation = NA_character_, .after = L13)
 
 # Education ------------------------------------------------------------------------------
 Education <- Education %>%
@@ -184,4 +207,4 @@ Closing_Group <- Closing_Group %>%
   relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # remove extra objects -------------------------------------------------------------------
-rm(key, cols, data_sub, agr_cols)
+rm(key, cols, data_sub, agr_cols, n_family)

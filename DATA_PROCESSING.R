@@ -16,7 +16,9 @@ source("R/functions/custom_functions.R")
 # file.edit("R/read_data.R")
 data_path <- "input/raw_data/" # data path
 convert_to_na <- c("NA", "N/A", "-", " ") # values to convert to NA
+geo_data <- read_excel("input/geo_updated.xlsx", sheet="Changes")
 source("R/read_data.R") # read data
+
 
 # Applying filters & adding new columns --------------------------------------------------
 # file.edit("R/filter_and_add.R")
