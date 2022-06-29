@@ -13,7 +13,7 @@ for(i in 1:nrow(data)){
   prov = data$Province_Final[i]
   dist = data$Distric_Final[i]
   
-  if(prov %in% geo_data$Province & dist %in% geo_data$Previous_Name){
+  if(prov %in% geo_data$Province & dist %in% geo_data$Previous_Name[geo_data$Province %in% prov]){
     new_dist <- geo_data$Revised_Name[geo_data$Province %in% prov & 
                                         geo_data$Previous_Name %in% dist]
     
