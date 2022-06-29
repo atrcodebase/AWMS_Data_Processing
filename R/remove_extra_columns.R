@@ -133,124 +133,47 @@ data <- data %>%
 
 # Roster_Verification
 Roster_Verification <- Roster_Verification %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_RV,
-    Region_Final = Region_Final_RV,
-    Province_Final = Province_Final_RV,
-    Distric_Final = Distric_Final_RV,
-    Respondent_Type_f = Respondent_Type_f_RV,
-    userid = userid_RV)
+  select(-new_uuid)
 
 # New_HH_Roster
 New_HH_Roster <- New_HH_Roster %>% 
-  select(-all_of(new_hh_roster_extra_columns)) %>% 
-  rename(
-    caseid = caseid_NR,
-    Region_Final = Region_Final_NR,
-    Province_Final = Province_Final_NR,
-    Distric_Final = Distric_Final_NR,
-    Respondent_Type_f = Respondent_Type_f_NR,
-    userid = userid_NR)
+  select(-all_of(new_hh_roster_extra_columns))
 
 # Labor
 Labor <- Labor %>% 
-  select(-all_of(labor_extra_columns)) %>% 
-  rename(
-    caseid = caseid_L,
-    Region_Final = Region_Final_L,
-    Province_Final = Province_Final_L,
-    Distric_Final = Distric_Final_L,
-    Respondent_Type_f = Respondent_Type_f_L,
-    userid = userid_L)
+  select(-all_of(labor_extra_columns))
 
 # Education
 Education <- Education %>% 
-  select(-all_of(education_extra_columns)) %>% 
-  rename(
-    caseid = caseid_ED,
-    Region_Final = Region_Final_ED,
-    Province_Final = Province_Final_ED,
-    Distric_Final = Distric_Final_ED,
-    Respondent_Type_f = Respondent_Type_f_ED,
-    userid = userid_ED)
+  select(-all_of(education_extra_columns))
 
 # Health
 Health <- Health %>% 
-  select(-all_of(health_extra_columns)) %>% 
-  rename(
-    caseid = caseid_HE,
-    Region_Final = Region_Final_HE,
-    Province_Final = Province_Final_HE,
-    Distric_Final = Distric_Final_HE,
-    Respondent_Type_f = Respondent_Type_f_HE,
-    userid = userid_HE)
+  select(-all_of(health_extra_columns))
 
 # Agriculture
 Agriculture <- Agriculture %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_A,
-    Region_Final = Region_Final_A,
-    Province_Final = Province_Final_A,
-    Distric_Final = Distric_Final_A,
-    Respondent_Type_f = Respondent_Type_f_A,
-    userid = userid_A)
+  select(-new_uuid)
 
 # Basic_needs
 Basic_needs <- Basic_needs %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_B,
-    Region_Final = Region_Final_B,
-    Province_Final = Province_Final_B,
-    Distric_Final = Distric_Final_B,
-    Respondent_Type_f = Respondent_Type_f_B,
-    userid = userid_B)
+  select(-new_uuid)
 
 # HH_Welfare
 HH_Welfare <- HH_Welfare %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_W,
-    Region_Final = Region_Final_W,
-    Province_Final = Province_Final_W,
-    Distric_Final = Distric_Final_W,
-    Respondent_Type_f = Respondent_Type_f_W,
-    userid = userid_W)
+  select(-new_uuid)
 
 # Covid19
 Covid19 <- Covid19 %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_C,
-    Region_Final = Region_Final_C,
-    Province_Final = Province_Final_C,
-    Distric_Final = Distric_Final_C,
-    Respondent_Type_f = Respondent_Type_f_C,
-    userid = userid_C)
+  select(-new_uuid)
 
 # Market
 Market <- Market %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_M,
-    Region_Final = Region_Final_M,
-    Province_Final = Province_Final_M,
-    Distric_Final = Distric_Final_M,
-    Respondent_Type_f = Respondent_Type_f_M,
-    userid = userid_M)
+  select(-new_uuid)
 
 # Closing_Group
 Closing_Group <- Closing_Group %>%
-  select(-new_uuid) %>% 
-  rename(
-    caseid = caseid_CL,
-    Region_Final = Region_Final_CL,
-    Province_Final = Province_Final_CL,
-    Distric_Final = Distric_Final_CL,
-    Respondent_Type_f = Respondent_Type_f_CL,
-    userid = userid_CL)
+  select(-new_uuid)
 
 # remove extra objects -------------------------------------------------------------------
 rm(data_extra_columns, new_hh_roster_extra_columns, labor_extra_columns, education_extra_columns, health_extra_columns)

@@ -9,8 +9,8 @@ if(!require(googlesheets4)) install.packages("googlesheets4")
 if(!require(dplyr)) install.packages("dplyr")
 # if(!require(lubridate)) install.packages("lubridate")
 if(!require(writexl)) install.packages("writexl")
-
-`%notin%` <- Negate(`%in%`)
+if(!require(tidyr)) install.packages("tidyr")
+source("R/functions/custom_functions.R")
 
 # Read data ------------------------------------------------------------------------------
 # file.edit("R/read_data.R")
@@ -28,10 +28,15 @@ googlesheets4::gs4_deauth()
 correction_log <- googlesheets4::read_sheet(url, sheet = "Correction_log", col_types = "c")
 L13_coding_log <- googlesheets4::read_sheet(url, sheet = "L13_Coding_Sheet", col_types = "c")
 QA_log <- googlesheets4::read_sheet(url, sheet = "QA_Log_R2", col_types = "c")
+rejection_log <- googlesheets4::read_sheet(url, sheet = "Tobe_dropped", col_types = "c")
 
 # apply correction/translation log -------------------------------------------------------
 # file.edit("R/apply_cleaning_log.R")
 source("R/apply_cleaning_log.R")
+
+# remove rejected keys -------------------------------------------------------------
+# file.edit("R/remove_rejected_keys.R")
+source("R/remove_rejected_keys.R")
 
 # Filter Data ----------------------------------------------------------------------------
 data <- data %>% 
@@ -46,7 +51,6 @@ source("R/filter_repeating_groups.R")
 # remove extra columns -------------------------------------------------------------------
 # file.edit("R/remove_extra_columns.R")
 source("R/remove_extra_columns.R")
-
 
 # export results -------------------------------------------------------------------------
 ### Raw Data

@@ -72,7 +72,7 @@ Market <- atRfunctions::apply_log(data = Market,
 Closing_Group <- atRfunctions::apply_log(data = Closing_Group, 
                                          log = correction_log)
 
-#havn't tested yet -----------------------------------------------------------------------
+#Apply L13 Coding ------------------------------------------------------------------------
 for(i in 1:nrow(L13_coding_log)){
   uuid_i <- L13_coding_log$KEY[i]
 
@@ -85,49 +85,55 @@ for(i in 1:nrow(L13_coding_log)){
 }
 
 # Verify correction log -------------------------------------------
-# correction_log_discrep <- rbind(
-#   atRfunctions::compare_dt(df1 = data_raw, df2 = data,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "data"),
-#   atRfunctions::compare_dt(df1 = Roster_Verification_raw, df2 = Roster_Verification,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Roster_Verification"),
-#   atRfunctions::compare_dt(df1 = New_HH_Roster_raw, df2 = New_HH_Roster,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "New_HH_Roster"),
-#   atRfunctions::compare_dt(df1 = Labor_raw, df2 = Labor,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Labor"),
-#   atRfunctions::compare_dt(df1 = Education_raw, df2 = Education,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Education"),
-#   atRfunctions::compare_dt(df1 = Health_raw, df2 = Health,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Health"),
-#   atRfunctions::compare_dt(df1 = Agriculture_raw, df2 = Agriculture,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Agriculture"),
-#   atRfunctions::compare_dt(df1 = Basic_needs_raw, df2 = Basic_needs,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Basic_needs"),
-#   atRfunctions::compare_dt(df1 = HH_Welfare_raw, df2 = HH_Welfare,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "HH_Welfare"),
-#   atRfunctions::compare_dt(df1 = Covid19_raw, df2 = Covid19,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Covid19"),
-#   atRfunctions::compare_dt(df1 = Market_raw, df2 = Market,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Market"),
-#   atRfunctions::compare_dt(df1 = Closing_Group_raw, df2 = Closing_Group,
-#                            unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>% 
-#     mutate(sheet_name = "Closing_Group")
-# ) %>%
-#   anti_join(correction_log, c("KEY",
-#                               "question",
-#                               # "old_value",
-#                               "new_value"))
+correction_log_discrep <- rbind(
+  compare_dt(df1 = data_raw, df2 = data,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "data"),
+  compare_dt(df1 = Roster_Verification_raw, df2 = Roster_Verification,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Roster_Verification"),
+  compare_dt(df1 = New_HH_Roster_raw, df2 = New_HH_Roster,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "New_HH_Roster"),
+  compare_dt(df1 = Labor_raw, df2 = Labor,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Labor"),
+  compare_dt(df1 = Education_raw, df2 = Education,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Education"),
+  compare_dt(df1 = Health_raw, df2 = Health,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Health"),
+  compare_dt(df1 = Agriculture_raw, df2 = Agriculture,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Agriculture"),
+  compare_dt(df1 = Basic_needs_raw, df2 = Basic_needs,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Basic_needs"),
+  compare_dt(df1 = HH_Welfare_raw, df2 = HH_Welfare,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "HH_Welfare"),
+  compare_dt(df1 = Covid19_raw, df2 = Covid19,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Covid19"),
+  compare_dt(df1 = Market_raw, df2 = Market,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Market"),
+  compare_dt(df1 = Closing_Group_raw, df2 = Closing_Group,
+                           unique_id_df1 = "KEY", unique_id_df2 = "KEY") %>%
+    mutate(sheet_name = "Closing_Group")
+) %>%
+  anti_join(correction_log, c("KEY",
+                              "question",
+                              # "old_value",
+                              "new_value")) %>% 
+  filter(KEY %notin% L13_coding_log$KEY & !grepl("L13_|_Code|_Label", question))
 
+if(nrow(correction_log_discrep) == 0){
+  print("All logs applied correctly!")
+} else {
+  print("Some logs are not applied correctly!!!")
+}
 
 
 # remove extra objects -------------------------------------------

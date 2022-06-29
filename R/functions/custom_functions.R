@@ -1,55 +1,33 @@
 `%notin%` <- Negate(`%in%`)
 
-
-apply_log <- function (data, log, data_KEY = "KEY", log_columns = c(question = "question", 
-                                                       old_value = "old_value", new_value = "new_value", KEY = "KEY")){
-  for (rowi in 1:nrow(log)) {
-    var_i <- log[[log_columns[["question"]]]][rowi]
-    old_i <- log[[log_columns[["old_value"]]]][rowi]
-    new_i <- log[[log_columns[["new_value"]]]][rowi]
-    uuid_i <- log[[log_columns[["KEY"]]]][rowi]
-    if (var_i %in% colnames(data)) {
-      var_type <- class(data[[var_i]])
-      if (var_type %in% "character") {
-        data[data[[data_KEY]] %in% uuid_i, var_i] <- as.character(new_i)
-      }
-      else {
-        data[data[[data_KEY]] %in% uuid_i, var_i] <- as.numeric(new_i)
-      }
-      print(paste("uuid:", uuid_i, "Old value: ", old_i, 
-                  "changed to", new_i, "for", var_i))
-    }
+compare_dt <- function (df1, df2, unique_id_df1, unique_id_df2, compare_all = TRUE) 
+{
+  if (compare_all == FALSE) {
+    df1 <- df1[, colnames(df1) %in% colnames(df2)]
+    df2 <- df2[, colnames(df2) %in% colnames(df1)]
   }
-  return(data)
-}
-
-#Checks if correction is applied correctly
-verify_log_changes <- function(raw_data, cleaned_data, identifier){
-  uuid <- vector()
-  question <- vector()
-  old_value <- vector()
-  new_value <- vector()
-  
-  for(col_name in colnames(cleaned_data) ){
-    
-    for(i in 1:length(cleaned_data[[col_name]])) {
-      id <- cleaned_data[[identifier]][i]
-      oldVal <- raw_data[[col_name]][raw_data[[identifier]] %in% id]
-      newVal <- cleaned_data[[col_name]][i]
-      
-      if(col_name %in% c("start", "end")){
-        oldVal <- as.character(oldVal)
-        newVal <- as.character(newVal)
-      }
-      
-      if(newVal %notin% oldVal){
-        uuid <- c(uuid, id)
-        question <- c(question, col_name)
-        old_value <- c(old_value, oldVal)
-        new_value <- c(new_value, newVal)
-      }  
-    }
+  if ("KEY" %in% colnames(df1) && unique_id_df1 != "KEY") {
+    df1 <- df1 %>% rename(key = KEY)
   }
-  log <- data.frame(uuid, question, old_value, new_value)
-  return(log)
+  df1 <- df1 %>% select(KEY = all_of(unique_id_df1), everything()) %>% 
+    mutate(across(-KEY, function(x) x = as.character(x))) %>% 
+    pivot_longer(-KEY, values_to = "value_1") %>% mutate(value_1 = str_squish(value_1))
+  if ("KEY" %in% colnames(df2) && unique_id_df2 != "KEY") {
+    df2 <- df2 %>% rename(key = KEY)
+  }
+  df2 <- df2 %>% select(KEY = all_of(unique_id_df2), everything()) %>% 
+    mutate(across(-KEY, function(x) x = as.character(x))) %>% 
+    pivot_longer(-KEY, values_to = "value_2") %>% mutate(value_2 = str_squish(value_2))
+  df_both <- full_join(df1, df2, by = c("KEY", "name"))
+  diff <- df_both %>% filter((value_1 != value_2) | (is.na(value_1) & 
+                                                       !is.na(value_2)) | (!is.na(value_1) & is.na(value_2))) %>% 
+    rename(question = name, old_value = value_1, new_value = value_2) %>% 
+    mutate(question = ifelse(question == "key", "KEY", question))
+  if (nrow(diff) == 0) {
+    paste0("No difference in df1 and df2")
+    return(diff)
+  }
+  else {
+    return(diff)
+  }
 }

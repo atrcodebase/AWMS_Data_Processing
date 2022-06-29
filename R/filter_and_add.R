@@ -1,44 +1,57 @@
-# Filter Data ----------------------------------------------------------------------------
-garbage_values <- c(
-  "0",
-  "،",
-  ":،،،",
-  "،،،،",
-  "0")
+# Create A subset of main sheet to be merged with child sheets ---------------------------
 key <- "new_uuid"
+cols <- "caseid|Region_Final|Province_Final|Distric_Final|Respondent_Type_f|userid"
+
+# Data
+data_sub <- data %>% 
+  select(grep(cols,names(data)), KEY)
 
 # Roster_Verification --------------------------------------------------------------------
 Roster_Verification <- Roster_Verification %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Roster_Verification))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 
 # New_HH_Roster --------------------------------------------------------------------------
 New_HH_Roster <- New_HH_Roster %>% 
-  filter(!is.na(HH_Mem_Name) & 
-           HH_Mem_Name %notin% garbage_values) %>% 
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(New_HH_Roster))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 
 # Labor ----------------------------------------------------------------------------------
 Labor <- Labor %>%
-  filter(!is.na(Family_Member_Labor_English) & 
-           Family_Member_Labor_English %notin% garbage_values) %>% 
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Labor))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
+Labor <- Labor %>%
+  filter(Family_Member_Age_Labor >= 14)
 
 # Education ------------------------------------------------------------------------------
 Education <- Education %>%
-  filter(!is.na(Family_Member_Education_English) & 
-           Family_Member_Education_English %notin% garbage_values) %>% 
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Education))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
+Education <- Education %>%
+  filter(Family_Member_Age_Education >= 6 & Family_Member_Age_Education <= 20)
 
 # Health ---------------------------------------------------------------------------------
 Health <- Health %>%
-  filter(!is.na(Family_Member_Health_English) & 
-           Family_Member_Health_English %notin% garbage_values) %>% 
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Health))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 
 # Agriculture ----------------------------------------------------------------------------
 Agriculture <- Agriculture %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
-#adds Family member name and age
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Agriculture))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
+# adds Family member name and age
 Agriculture <- Agriculture %>% 
   left_join(
     Roster_Verification %>% 
@@ -51,11 +64,26 @@ Agriculture <- Agriculture %>%
     age_verification_final = 
       if_else(is.na(age_verification_final), HH_Mem_Age,age_verification_final), 
     HH_Mem_Name=NULL, HH_Mem_Age=NULL) %>% 
-  relocate(Name_Roster, age_verification_final, .before = 1)
-
+  relocate(Name_Roster, age_verification_final, .after = Distric_Final)
+# Filter
+agr_cols <- c(
+  "phone_response_short",
+  "Am_I_Speaking_to_Household_Head",
+  "Can_I_Speack_to_Household_Head"
+)
+Agriculture <- Agriculture %>% 
+  left_join(data %>% 
+              select(all_of(agr_cols), KEY), 
+            by = c("PARENT_KEY" = "KEY")) %>% 
+  filter(phone_response_short == "Complete" & (Am_I_Speaking_to_Household_Head == 1 | Can_I_Speack_to_Household_Head == 1)) %>% 
+  select(-all_of(agr_cols))
+  
 # Basic_needs ----------------------------------------------------------------------------
 Basic_needs <- Basic_needs %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Basic_needs))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Basic_needs <- Basic_needs %>% 
   left_join(
@@ -69,11 +97,14 @@ Basic_needs <- Basic_needs %>%
          age_verification_final = 
            if_else(is.na(age_verification_final), HH_Mem_Age,age_verification_final), 
          HH_Mem_Name=NULL, HH_Mem_Age=NULL) %>% 
-  relocate(Name_Roster, age_verification_final, .before = 1)
+  relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # HH_Welfare -----------------------------------------------------------------------------
 HH_Welfare <- HH_Welfare %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(HH_Welfare))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 HH_Welfare <- HH_Welfare %>%
   left_join(
@@ -87,11 +118,14 @@ HH_Welfare <- HH_Welfare %>%
          age_verification_final = 
            if_else(is.na(age_verification_final), HH_Mem_Age,age_verification_final), 
          HH_Mem_Name=NULL, HH_Mem_Age=NULL) %>% 
-  relocate(Name_Roster, age_verification_final, .before = 1)
+  relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # Covid19 --------------------------------------------------------------------------------
 Covid19 <- Covid19 %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Covid19))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Covid19 <- Covid19 %>%
   left_join(
@@ -105,11 +139,14 @@ Covid19 <- Covid19 %>%
          age_verification_final = 
            if_else(is.na(age_verification_final), HH_Mem_Age,age_verification_final), 
          HH_Mem_Name=NULL, HH_Mem_Age=NULL) %>% 
-  relocate(Name_Roster, age_verification_final, .before = 1)
+  relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # Market  --------------------------------------------------------------------------------
 Market <- Market %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Market))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Market <- Market %>%
   left_join(
@@ -123,11 +160,14 @@ Market <- Market %>%
          age_verification_final = 
            if_else(is.na(age_verification_final), HH_Mem_Age,age_verification_final), 
          HH_Mem_Name=NULL, HH_Mem_Age=NULL) %>% 
-  relocate(Name_Roster, age_verification_final, .before = 1)
+  relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # Closing_Group  -------------------------------------------------------------------------
 Closing_Group <- Closing_Group %>%
-  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", ""))
+  mutate(new_uuid = str_replace(KEY, "(?<=Roster)(.*?)(?=\\[)", "")) %>% 
+  select(-grep(cols,names(Closing_Group))) %>%
+  left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
+  relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Closing_Group <- Closing_Group %>%
   left_join(
@@ -141,7 +181,7 @@ Closing_Group <- Closing_Group %>%
          age_verification_final = 
            if_else(is.na(age_verification_final), HH_Mem_Age,age_verification_final), 
          HH_Mem_Name=NULL, HH_Mem_Age=NULL) %>% 
-  relocate(Name_Roster, age_verification_final, .before = 1)
+  relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # remove extra objects -------------------------------------------------------------------
-rm(garbage_values, key)
+rm(key, cols, data_sub, agr_cols)
