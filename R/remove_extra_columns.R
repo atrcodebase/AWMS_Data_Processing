@@ -99,7 +99,6 @@ education_extra_columns <- c(
   "Education_Wording3_Pashot",
   "new_uuid"
 )
-
 health_extra_columns <- c(
   "Family_Member_Health_Dari",
   "Family_Member_Health_Pashto",
@@ -112,64 +111,39 @@ health_extra_columns <- c(
   "new_uuid"
 )
 
-### remove extra columns from Raw Data -----------------------------------------------
-data_raw <- data_raw %>% select(-all_of(data_extra_columns))
-Roster_Verification_raw <- Roster_Verification_raw %>% select(-new_uuid)
-New_HH_Roster_raw <- New_HH_Roster_raw %>% select(-all_of(new_hh_roster_extra_columns))
-Labor_raw <- Labor_raw %>% select(-all_of(labor_extra_columns))
-Education_raw <- Education_raw %>% select(-all_of(education_extra_columns))
-Health_raw <- Health_raw %>% select(-all_of(health_extra_columns))
-Agriculture_raw <- Agriculture_raw %>% select(-new_uuid)
-Basic_needs_raw <- Basic_needs_raw %>% select(-new_uuid)
-HH_Welfare_raw <- HH_Welfare_raw %>% select(-new_uuid)
-Covid19_raw <- Covid19_raw %>% select(-new_uuid)
-Market_raw <- Market_raw %>% select(-new_uuid)
-Closing_Group_raw <- Closing_Group_raw %>% select(-new_uuid)
-
-### remove extra columns from Cleaned Data & Rename --------------------------------------
+### remove extra columns -----------------------------------------------------------------
 data <- data %>% 
   select(-all_of(data_extra_columns))
-
 # Roster_Verification
 Roster_Verification <- Roster_Verification %>%
   select(-new_uuid)
-
 # New_HH_Roster
 New_HH_Roster <- New_HH_Roster %>% 
   select(-all_of(new_hh_roster_extra_columns))
-
 # Labor
 Labor <- Labor %>% 
   select(-all_of(labor_extra_columns))
-
 # Education
 Education <- Education %>% 
   select(-all_of(education_extra_columns))
-
 # Health
 Health <- Health %>% 
   select(-all_of(health_extra_columns))
-
 # Agriculture
 Agriculture <- Agriculture %>%
   select(-new_uuid)
-
 # Basic_needs
 Basic_needs <- Basic_needs %>%
   select(-new_uuid)
-
 # HH_Welfare
 HH_Welfare <- HH_Welfare %>%
   select(-new_uuid)
-
 # Covid19
 Covid19 <- Covid19 %>%
   select(-new_uuid)
-
 # Market
 Market <- Market %>%
   select(-new_uuid)
-
 # Closing_Group
 Closing_Group <- Closing_Group %>%
   select(-new_uuid)

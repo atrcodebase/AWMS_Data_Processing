@@ -1,8 +1,9 @@
 # Update Total Family members in Main sheet ----------------------------------------------
 n_family <- rbind(Roster_Verification %>% 
-        select(PARENT_KEY),
-      New_HH_Roster %>% 
-        select(PARENT_KEY)) %>% 
+                    filter(Roster_Name_Ver %notin% c("0", "98")) %>% 
+                    select(PARENT_KEY),
+                  New_HH_Roster %>% 
+                    select(PARENT_KEY)) %>% 
   count(KEY=PARENT_KEY, name="n_family_sample_new")
 data <- data %>% 
   left_join(n_family, by = "KEY") %>% 
@@ -23,10 +24,9 @@ for(i in 1:nrow(data)){
 
 # Create A subset of main sheet to be merged with child sheets
 key <- "new_uuid"
-cols <- "caseid|Region_Final|Province_Final|Distric_Final|Respondent_Type_f|userid"
-data_sub <- data %>% 
+cols <- "caseid|Region_Final|Province_Final|Distric_Final|Respondent_Type_f|userid" #include after log
+data_sub <- data %>%
   select(grep(cols,names(data)), KEY)
-
 
 # Roster_Verification --------------------------------------------------------------------
 Roster_Verification <- Roster_Verification %>%
@@ -34,6 +34,9 @@ Roster_Verification <- Roster_Verification %>%
   select(-grep(cols,names(Roster_Verification))) %>%
   left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
   relocate(caseid:Distric_Final, .before = 1)
+#subset to join with other sheets
+roster_verf_sub <- Roster_Verification %>% 
+  select(Name_Roster, age_verification_final, new_uuid)
 
 # New_HH_Roster --------------------------------------------------------------------------
 New_HH_Roster <- New_HH_Roster %>% 
@@ -41,6 +44,9 @@ New_HH_Roster <- New_HH_Roster %>%
   select(-grep(cols,names(New_HH_Roster))) %>%
   left_join(data_sub, by = c("PARENT_KEY" = "KEY"), .before = 1) %>% 
   relocate(caseid:Distric_Final, .before = 1)
+#subset to join with other sheets
+new_roster_sub <- New_HH_Roster %>% 
+  select(HH_Mem_Name, HH_Mem_Age, new_uuid)
 
 # Labor ----------------------------------------------------------------------------------
 Labor <- Labor %>%
@@ -76,12 +82,8 @@ Agriculture <- Agriculture %>%
   relocate(caseid:Distric_Final, .before = 1)
 # adds Family member name and age
 Agriculture <- Agriculture %>% 
-  left_join(
-    Roster_Verification %>% 
-      select(Name_Roster, age_verification_final, new_uuid), by = key) %>% 
-  left_join(
-    New_HH_Roster %>% 
-      select(HH_Mem_Name, HH_Mem_Age, new_uuid), by = key) %>% 
+  left_join(roster_verf_sub, by = key) %>% 
+  left_join(new_roster_sub, by = key) %>% 
   mutate(Name_Roster = 
            if_else(is.na(Name_Roster), HH_Mem_Name,Name_Roster),
     age_verification_final = 
@@ -109,12 +111,8 @@ Basic_needs <- Basic_needs %>%
   relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Basic_needs <- Basic_needs %>% 
-  left_join(
-    Roster_Verification %>% 
-      select(Name_Roster, age_verification_final, new_uuid), by = key) %>% 
-  left_join(
-    New_HH_Roster %>% 
-      select(HH_Mem_Name, HH_Mem_Age, new_uuid), by = key) %>% 
+  left_join(roster_verf_sub, by = key) %>% 
+  left_join(new_roster_sub, by = key) %>% 
   mutate(Name_Roster = 
            if_else(is.na(Name_Roster), HH_Mem_Name,Name_Roster),
          age_verification_final = 
@@ -130,12 +128,8 @@ HH_Welfare <- HH_Welfare %>%
   relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 HH_Welfare <- HH_Welfare %>%
-  left_join(
-    Roster_Verification %>% 
-      select(Name_Roster, age_verification_final, new_uuid), by = key) %>% 
-  left_join(
-    New_HH_Roster %>% 
-      select(HH_Mem_Name, HH_Mem_Age, new_uuid), by = key) %>% 
+  left_join(roster_verf_sub, by = key) %>% 
+  left_join(new_roster_sub, by = key) %>% 
   mutate(Name_Roster = 
            if_else(is.na(Name_Roster), HH_Mem_Name,Name_Roster),
          age_verification_final = 
@@ -151,12 +145,8 @@ Covid19 <- Covid19 %>%
   relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Covid19 <- Covid19 %>%
-  left_join(
-    Roster_Verification %>% 
-      select(Name_Roster, age_verification_final, new_uuid), by = key) %>% 
-  left_join(
-    New_HH_Roster %>% 
-      select(HH_Mem_Name, HH_Mem_Age, new_uuid), by = key) %>% 
+  left_join(roster_verf_sub, by = key) %>% 
+  left_join(new_roster_sub, by = key) %>% 
   mutate(Name_Roster = 
            if_else(is.na(Name_Roster), HH_Mem_Name,Name_Roster),
          age_verification_final = 
@@ -172,12 +162,8 @@ Market <- Market %>%
   relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Market <- Market %>%
-  left_join(
-    Roster_Verification %>% 
-      select(Name_Roster, age_verification_final, new_uuid), by = key) %>% 
-  left_join(
-    New_HH_Roster %>% 
-      select(HH_Mem_Name, HH_Mem_Age, new_uuid), by = key) %>% 
+  left_join(roster_verf_sub, by = key) %>% 
+  left_join(new_roster_sub, by = key) %>%  
   mutate(Name_Roster = 
            if_else(is.na(Name_Roster), HH_Mem_Name,Name_Roster),
          age_verification_final = 
@@ -193,12 +179,8 @@ Closing_Group <- Closing_Group %>%
   relocate(caseid:Distric_Final, .before = 1)
 #adds Family member name and age
 Closing_Group <- Closing_Group %>%
-  left_join(
-    Roster_Verification %>% 
-      select(Name_Roster, age_verification_final, new_uuid), by = key) %>% 
-  left_join(
-    New_HH_Roster %>% 
-      select(HH_Mem_Name, HH_Mem_Age, new_uuid), by = key) %>% 
+  left_join(roster_verf_sub, by = key) %>% 
+  left_join(new_roster_sub, by = key) %>% 
   mutate(Name_Roster = 
            if_else(is.na(Name_Roster), HH_Mem_Name,Name_Roster),
          age_verification_final = 
@@ -207,4 +189,4 @@ Closing_Group <- Closing_Group %>%
   relocate(Name_Roster, age_verification_final, .after = Distric_Final)
 
 # remove extra objects -------------------------------------------------------------------
-rm(key, cols, data_sub, agr_cols, n_family)
+rm(key, cols, data_sub, agr_cols, n_family, roster_verf_sub, new_roster_sub)

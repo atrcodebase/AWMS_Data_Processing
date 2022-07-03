@@ -1,26 +1,26 @@
-### Remove rejected keys -----------------------------------------------------------------
-data <- data %>% 
+### Remove rejected keys from Cleaned Approved data --------------------------------------
+data_cleaned_filtered <- data_cleaned_filtered %>% 
   filter(KEY %notin% rejection_log$KEY)
-Roster_Verification <- Roster_Verification %>%
+Roster_Verification_cleaned_filtered <- Roster_Verification_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-New_HH_Roster <- New_HH_Roster %>%
+New_HH_Roster_cleaned_filtered <- New_HH_Roster_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Labor <- Labor %>%
+Labor_cleaned_filtered <- Labor_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Education <- Education %>%
+Education_cleaned_filtered <- Education_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Health <- Health %>%
+Health_cleaned_filtered <- Health_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Agriculture <- Agriculture %>%
+Agriculture_cleaned_filtered <- Agriculture_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Basic_needs <- Basic_needs %>%
+Basic_needs_cleaned_filtered <- Basic_needs_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-HH_Welfare <- HH_Welfare %>%
+HH_Welfare_cleaned_filtered <- HH_Welfare_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Covid19 <- Covid19 %>%
+Covid19_cleaned_filtered <- Covid19_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Market <- Market %>%
+Market_cleaned_filtered <- Market_cleaned %>%
   filter(KEY %notin% rejection_log$KEY)
-Closing_Group <- Closing_Group %>%
+Closing_Group_cleaned_filtered <- Closing_Group_cleaned%>%
   filter(KEY %notin% rejection_log$KEY)
 
