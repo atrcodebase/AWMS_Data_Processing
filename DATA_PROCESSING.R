@@ -40,16 +40,16 @@ rejection_log <- googlesheets4::read_sheet(url, sheet = "Tobe_dropped", col_type
 # file.edit("R/apply_cleaning_log.R")
 source("R/apply_cleaning_log.R")
 
+# remove rejected keys -------------------------------------------------------------
+# file.edit("R/remove_rejected_keys.R")
+source("R/remove_rejected_keys.R")
+
 # Filter Data ----------------------------------------------------------------------------
 data_cleaned <- data_cleaned %>% 
   left_join(QA_log %>% select(KEY=UUID, qa_status=`Final QA Status`), by="KEY")
 #Cleaned Approved Data only
 data_cleaned_filtered <- data_cleaned %>% 
   filter(qa_status %in% "Approved")
-
-# remove rejected keys -------------------------------------------------------------
-# file.edit("R/remove_rejected_keys.R")
-source("R/remove_rejected_keys.R")
 
 # Filter repeating groups based on the mainsheet -----------------------------------------
 # file.edit("R/filter_repeating_groups.R")

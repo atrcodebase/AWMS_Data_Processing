@@ -13,13 +13,28 @@ data <- data %>%
 for(i in 1:nrow(data)){
   prov = data$Province_Final[i]
   dist = data$Distric_Final[i]
+  d_prov = data$database_province[i]
+  d_dist = data$database_district[i]
   
+  #Updates District Final
   if(prov %in% geo_data$Province & dist %in% geo_data$Previous_Name[geo_data$Province %in% prov]){
     new_dist <- geo_data$Revised_Name[geo_data$Province %in% prov & 
                                         geo_data$Previous_Name %in% dist]
-    
     data$Distric_Final[i] <- new_dist
   }
+  
+  #Updates Database District
+  if(d_prov %in% geo_data$Province & d_dist %in% geo_data$Previous_Name[geo_data$Province %in% d_prov]){
+    new_dist <- geo_data$Revised_Name[geo_data$Province %in% d_prov & 
+                                        geo_data$Previous_Name %in% d_dist]
+    data$database_district[i] <- new_dist
+  }
+}
+#print in case province not in geo_data
+missing_prov <- unique(data$database_province[data$database_province %notin% geo_data$Province])
+if(length(missing_prov) > 0){
+  print("The following provinces are not in Geo-Data:")
+  print(missing_prov)
 }
 
 # Create A subset of main sheet to be merged with child sheets
