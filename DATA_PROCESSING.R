@@ -20,6 +20,12 @@ convert_to_na <- c("NA", "N/A", "-", " ") # values to convert to NA
 geo_data <- read_excel("input/geo_updated.xlsx", sheet="Changes")
 source("R/read_data.R") # read data
 
+# Check Relevancy ------------------------------------------------------------------------
+# file.edit("R/relevancy_check.R")
+source("R/relevancy_check.R")
+
+print(relevancy_issues)
+
 # Applying filters & adding new columns --------------------------------------------------
 # file.edit("R/filter_and_add.R")
 source("R/filter_and_add.R")
